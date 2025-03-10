@@ -1,5 +1,5 @@
 # Utiliser une image Node.js légère
-FROM node:alpine3.21
+FROM node:23.9.0-slim
 
 # Définir le répertoire de travail dans le conteneur
 WORKDIR /frontend/annuaire
