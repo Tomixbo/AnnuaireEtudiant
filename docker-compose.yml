@@ -1,0 +1,33 @@
+services:
+  db:
+    container_name: sdm-db
+    image: mariadb:11.8-rc
+    restart: always
+    volumes:
+      - sdm_db_data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=tombo_cicd_1
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_PASSWORD=root
+    ports:
+      - 3306:3306
+  frontend:
+    container_name: sdm-frontend
+    image: tomixbo/sdm-frontend:latest
+    restart: always
+    ports:
+      - 5173:5173
+    depends_on:
+      - db
+  backend:
+    container_name: sdm-backend
+    image: tomixbo/sdm-backend:latest
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - db
+volumes:
+  sdm_db_data:
+    
