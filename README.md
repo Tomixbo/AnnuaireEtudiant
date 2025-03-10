@@ -112,6 +112,9 @@ inspired by the official Jenkins documentation: [Jenkins Pipeline - Docker](http
     https://download.docker.com/linux/debian \
     $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
     RUN apt-get update && apt-get install -y docker-ce-cli
+    RUN mkdir -p /usr/local/lib/docker/cli-plugins && \
+    curl -SL "https://github.com/docker/compose/releases/download/v2.33.1/docker-compose-linux-x86_64" -o /usr/local/lib/docker/cli-plugins/docker-compose && \
+    chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
     USER jenkins
     RUN jenkins-plugin-cli --plugins "blueocean docker-workflow"
     ```
