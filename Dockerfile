@@ -14,10 +14,10 @@ ENV FLASK_ENV=production
 # Expose the port Flask runs on (default: 5000)
 EXPOSE 5000
 
-# Run database migrations
-RUN flask db init || true
-RUN flask db migrate -m "Initial migration" || true
-RUN flask db upgrade || true
+RUN chmod +x /entrypoint.sh
 
-# Start the Flask server
-CMD ["python", "run.py"]
+# Expose Flask port
+EXPOSE 5000
+
+# Set entrypoint script
+ENTRYPOINT ["/entrypoint.sh"]
