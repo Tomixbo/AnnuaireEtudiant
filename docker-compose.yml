@@ -10,10 +10,6 @@ services:
       - MYSQL_USER=${DB_USER}
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
       - MYSQL_PASSWORD=${DB_PASSWORD}
-    ports:
-      - 3306:3306 
-    env_file:
-      - .env
   frontend:
     container_name: sdm-frontend
     image: tomixbo/sdm-frontend:latest
@@ -26,8 +22,11 @@ services:
     container_name: sdm-backend
     image: tomixbo/sdm-backend:latest
     restart: always
-    env_file:
-      - .env
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PASSWORD=${DB_PASSWORD}
     depends_on:
       - db
 volumes:
