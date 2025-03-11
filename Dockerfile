@@ -1,5 +1,5 @@
 # Utiliser une image Node.js légère
-FROM node:slim
+FROM node:20-alpine
 
 # Définir le répertoire de travail dans le conteneur
 WORKDIR /frontend-lite
