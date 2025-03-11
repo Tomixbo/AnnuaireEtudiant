@@ -89,7 +89,8 @@ inspired by the official Jenkins documentation: [Jenkins Pipeline - Docker](http
 2. In order to execute Docker commands inside Jenkins nodes, download and run the `docker:dind` Docker image using the following docker run command:
 
     ```bash
-    $ docker run --name jenkins-docker --rm --detach \
+    $ docker run --name jenkins-docker --detach \
+        --restart=always \
         --privileged --network jenkins --network-alias docker \
         --env DOCKER_TLS_CERTDIR=/certs \
         --volume jenkins-docker-certs:/certs/client \
@@ -139,6 +140,31 @@ inspired by the official Jenkins documentation: [Jenkins Pipeline - Docker](http
 
 5. Proceed to the [Post-installation setup wizard](#post-installation-setup-wizard).
 
+#### Alternative if the server has not enough resources to manage both docker daemon on host and in the container dind
+1. Use directly the host docker daemon without TLS (🚨Exposing Docker on tcp://0.0.0.0:2375 without TLS is a security risk!🚨)
+2. Create daemon.json file in /etc/docker:
+
+    ```json
+    {"hosts": ["tcp://0.0.0.0:2375", "unix:///var/run/docker.sock"]}
+    ```
+
+3. Reload the systemd daemon:
+    ```bash
+    $ systemctl daemon-reload
+    ```
+4. Restart docker:
+    ```bash
+    $ systemctl restart docker.service
+    ```
+5. Run your own `myjenkins-blueocean:2.492.2-1` image as a container in Docker using the following docker run command:
+
+    ```bash
+    docker run --name jenkins --restart=on-failure --detach \
+    --privileged \
+    --env DOCKER_HOST=tcp://172.17.0.1:2375  \
+    --volume jenkins-data:/var/jenkins_home \
+    --publish 8080:8080 --publish 50000:50000 myjenkins-blueocean:2.492.2-1
+    ```
 ### Post-installation setup wizard
 After downloading, installing and running Jenkins using one of the procedures above (except for installation with Jenkins Operator), the post-installation setup wizard begins.
 
@@ -192,3 +218,86 @@ Finally, after customizing Jenkins with plugins, Jenkins asks you to create your
 
         *If required, log in to Jenkins with the credentials of the user you just created and you are ready to start using Jenkins!*
 
+
+### Create jenkins pipeline
+
+```groovy
+pipeline {
+    agent any
+
+    environment {
+        REPO_URL = 'https://github.com/Tomixbo/AnnuaireEtudiant'
+        IMAGE_NAME = 'tomixbo/sdm-frontend'
+        BUILD_TAG = "1.${env.BUILD_NUMBER}"
+        FRONTEND_DIR = 'workspace/frontend'
+        DOCKER_COMPOSE_DIR = 'workspace/docker-deploy'
+    }
+
+    stages {
+        stage('Checkout Frontend Branch') {
+            steps {
+                script {
+                    // Cloner la branche frontend dans un dossier spécifique sans supprimer d'anciens fichiers
+                    checkout scmGit(branches: [[name: '*/frontend']], 
+                                    extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: FRONTEND_DIR]], 
+                                    userRemoteConfigs: [[url: env.REPO_URL]])
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                timeout(time: 30, unit: 'MINUTES') { // Timeout pour le build Docker
+                    script {
+                        sh """
+                            cd ${FRONTEND_DIR}
+                            docker build -t ${IMAGE_NAME}:${BUILD_TAG} -t ${IMAGE_NAME}:latest .
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'dockerhub') {
+                        sh "docker push ${IMAGE_NAME}:${BUILD_TAG}"
+                        sh "docker push ${IMAGE_NAME}:latest"
+                    }
+                }
+            }
+        }
+
+        stage('Checkout Docker Compose Branch') {
+            steps {
+                script {
+                    // Cloner la branche main dans un dossier spécifique sans supprimer d'anciens fichiers
+                    checkout scmGit(branches: [[name: '*/main']], 
+                                    extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: DOCKER_COMPOSE_DIR]], 
+                                    userRemoteConfigs: [[url: env.REPO_URL]])
+                }
+            }
+        }
+
+        stage('Deploy with Docker Compose') {
+            steps {
+                script {
+                    sh """
+                        cd ${DOCKER_COMPOSE_DIR}
+                        docker compose down || true  # Évite l'erreur si aucun container ne tourne
+                        docker compose pull
+                        docker compose up -d
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Déployement terminé'
+        }
+    }
+}
+```
