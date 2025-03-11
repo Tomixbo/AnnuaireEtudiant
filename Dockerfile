@@ -14,10 +14,11 @@ ENV FLASK_ENV=production
 # Expose the port Flask runs on (default: 5000)
 EXPOSE 5000
 
-RUN chmod +x /entrypoint.sh
+# Copy the entrypoint script separately to a standard location
+RUN chmod +x entrypoint.sh
 
 # Expose Flask port
 EXPOSE 5000
 
 # Set entrypoint script
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["entrypoint.sh"]
