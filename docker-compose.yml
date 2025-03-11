@@ -1,7 +1,7 @@
 services:
   db:
     container_name: sdm-db
-    image: mariadb:11.8-rc
+    image: alpinelinux/mariadb:latest
     restart: always
     volumes:
       - sdm_db_data:/var/lib/mysql
