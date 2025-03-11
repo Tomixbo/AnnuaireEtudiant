@@ -3,6 +3,6 @@
     "http-server": "^14.1.1"
   },
   "scripts": {
-    "serve": "http-server -p 8080"
+    "serve": "http-server -p 5173 -a 0.0.0.0"
   }
 }
