@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const StudentForm = ({ onStudentAdded, editingStudent }) => {
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
@@ -23,7 +25,7 @@ const StudentForm = ({ onStudentAdded, editingStudent }) => {
     if (id) {
       // Mode édition : Mettre à jour l'étudiant
       axios
-        .put(`http://127.0.0.1:5000/api/students/${id}`, {
+        .put(`${API_BASE_URL}/api/students/${id}`, {
           first_name,
           last_name,
           email,
@@ -36,7 +38,7 @@ const StudentForm = ({ onStudentAdded, editingStudent }) => {
     } else {
       // Mode ajout : Créer un nouvel étudiant
       axios
-        .post("http://127.0.0.1:5000/api/students", {
+        .post(`${API_BASE_URL}/api/students`, {
           first_name,
           last_name,
           email,

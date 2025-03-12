@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const StudentList = ({ onEdit }) => {
   const [students, setStudents] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:5000/api/students")
+      .get(`${API_BASE_URL}:5000/api/students`)
       .then((response) => setStudents(response.data))
       .catch((error) => console.error(error));
   }, []);
 
   const deleteStudent = (id) => {
     axios
-      .delete(`http://127.0.0.1:5000/api/students/${id}`)
+      .delete(`${API_BASE_URL}/api/students/${id}`)
       .then(() => setStudents(students.filter((s) => s.id !== id)))
       .catch((error) => console.error(error));
   };
