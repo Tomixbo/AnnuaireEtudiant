@@ -5,6 +5,7 @@ FROM tomixbo/flask-py3-alpine:latest
 WORKDIR /backend
 
 # Copy entrypoint script first, separately
+USER root
 COPY entrypoint.sh /backend/entrypoint.sh
 RUN chmod +x /backend/entrypoint.sh
 
