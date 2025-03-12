@@ -4,6 +4,10 @@ FROM tomixbo/flask-py3-alpine:latest
 # Set the working directory in the container
 WORKDIR /backend
 
+# Copy entrypoint script first, separately
+COPY entrypoint.sh /backend/entrypoint.sh
+RUN chmod +x /backend/entrypoint.sh
+
 # Copy the rest of the application code
 COPY . .
 
@@ -14,11 +18,5 @@ ENV FLASK_ENV=production
 # Expose the port Flask runs on (default: 5000)
 EXPOSE 5000
 
-# Copy the entrypoint script separately to a standard location
-RUN chmod +x entrypoint.sh
-
-# Expose Flask port
-EXPOSE 5000
-
-# Set entrypoint script
-ENTRYPOINT ["entrypoint.sh"]
+# Set correct entrypoint path
+ENTRYPOINT ["/backend/entrypoint.sh"]
