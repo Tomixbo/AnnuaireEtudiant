@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = window.ENV?.VITE_API_BASE_URL || "http://sdm-db:5000";
 
 const StudentList = ({ onEdit }) => {
   const [students, setStudents] = useState([]);
