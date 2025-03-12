@@ -8,7 +8,7 @@ const StudentList = ({ onEdit }) => {
 
   useEffect(() => {
     axios
-      .get(`${API_BASE_URL}:5000/api/students`)
+      .get(`${API_BASE_URL}/api/students`)
       .then((response) => setStudents(response.data))
       .catch((error) => console.error(error));
   }, []);
