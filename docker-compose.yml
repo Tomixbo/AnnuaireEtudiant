@@ -1,10 +1,23 @@
 services:
+  db:
+    container_name: sdm-db
+    image: alpinelinux/mariadb:latest
+    restart: always
+    volumes:
+      - sdm_db_data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
   frontend:
     container_name: sdm-frontend
     image: tomixbo/sdm-frontend:latest
     restart: always
     ports:
       - 5173:5173
+    depends_on:
+      - db
   backend:
     container_name: sdm-backend
     image: tomixbo/sdm-backend:latest
@@ -12,7 +25,10 @@ services:
     environment:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
-      - DB_HOST=${DB_HOST}
       - DB_PASSWORD=${DB_PASSWORD}
-      - DB_PORT=${DB_PORT}
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      - db
+volumes:
+  sdm_db_data:
     
