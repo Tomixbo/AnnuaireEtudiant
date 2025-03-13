@@ -21,7 +21,7 @@ const StudentList = ({ onEdit }) => {
   };
 
   return (
-    <div className="p-4 bg-gray-100 rounded-lg shadow-md">
+    <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md">
       <h2 className="text-xl font-bold mb-4">Liste des étudiants</h2>
       <ul className="space-y-2">
         {students.map((student) => (
@@ -37,13 +37,13 @@ const StudentList = ({ onEdit }) => {
             </div>
             <div className="space-x-2">
               <button
-                className="bg-blue-500 text-white px-3 py-1 rounded"
+                className="border border-blue-500 hover:bg-blue-500 text-blue-500 px-3 py-1 rounded"
                 onClick={() => onEdit(student)}
               >
                 Éditer
               </button>
               <button
-                className="bg-red-500 text-white px-3 py-1 rounded"
+                className="border border-red-500 hover:bg-red-500 text-red-500 px-3 py-1 rounded"
                 onClick={() => deleteStudent(student.id)}
               >
                 Supprimer

@@ -90,14 +90,14 @@ const StudentForm = ({ onStudentAdded, editingStudent }) => {
       />
       <div className="flex space-x-2">
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
           type="submit"
         >
           {id ? "Mettre à jour" : "Ajouter"}
         </button>
         {id && (
           <button
-            className="bg-gray-500 text-white px-4 py-2 rounded"
+            className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded "
             type="button"
             onClick={resetForm}
           >
