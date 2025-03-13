@@ -1,13 +1,10 @@
-# Utiliser l'image Caddy officielle
 FROM caddy:alpine
 
-# Copier les fichiers statiques dans le dossier de Caddy
-COPY . /usr/share/caddy
+WORKDIR /usr/share/caddy
+COPY . .
 
-# Exposer le port 5173
+RUN apk add --no-cache curl
+
 EXPOSE 5173
 
-RUN echo '<script>window.ENV = { VITE_API_BASE_URL: "http://sdm-backend:5000" };</script>' >> /usr/share/caddy/index.html
-
-# Lancer Caddy directement avec les arguments de configuration
-CMD ["caddy", "file-server", "--root", "/usr/share/caddy", "--listen", ":5173"]
+ENTRYPOINT ["/bin/sh", "-c", "SERVER_IP=$(curl -s ifconfig.me) && echo \"<script>window.ENV = { VITE_API_BASE_URL: 'http://$SERVER_IP:$BACKEND_PORT' };</script>\" >> /usr/share/caddy/index.html && exec caddy file-server --root /usr/share/caddy --listen :5173"]
