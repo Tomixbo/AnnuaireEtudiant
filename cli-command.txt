@@ -1,0 +1,34 @@
+set -a               # Active l'export automatique des variables
+source .env          # Charge les variables dans l'environnement
+set +a               # Désactive l'export automatique
+
+docker network create sdm-network
+
+docker run -d --name sdm-db --restart always\
+  --network sdm-network \
+  --env-file .env \
+  -e MYSQL_DATABASE=${DB_NAME} \
+  -e MYSQL_USER=${DB_USER} \
+  -e MYSQL_ROOT_PASSWORD=${DB_PASSWORD} \
+  -e MYSQL_PASSWORD=${DB_PASSWORD} \
+  -v sdm_db_data:/var/lib/mysql \
+  mariadb:11.8-rc
+
+docker run -d --name sdm-backend --restart always\
+  --network sdm-network \
+  --env-file .env \
+  -p 5000:5000 \
+  -e DB_NAME=${DB_NAME} \
+  -e DB_USER=${DB_USER} \
+  -e DB_PASSWORD=${DB_PASSWORD} \
+  -e DB_HOST=${DB_HOST} \
+  -e DB_PORT=${DB_PORT} \
+  tomixbo/sdm-backend:latest
+
+docker run -d --name sdm-frontend --restart always\
+  --network sdm-network \
+  -e BACKEND_PORT=${BACKEND_PORT} \
+  -p 5173:5173 \
+  tomixbo/sdm-frontend:latest
+
+
