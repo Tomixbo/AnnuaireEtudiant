@@ -37,13 +37,13 @@ const StudentList = ({ onEdit }) => {
             </div>
             <div className="space-x-2">
               <button
-                className="border border-blue-500 hover:bg-blue-500 text-blue-500 px-3 py-1 rounded"
+                className="border border-blue-500 hover:bg-blue-500 text-blue-500 hover:text-white px-3 py-1 rounded cursor-pointer"
                 onClick={() => onEdit(student)}
               >
                 Éditer
               </button>
               <button
-                className="border border-red-500 hover:bg-red-500 text-red-500 px-3 py-1 rounded"
+                className="border border-red-500 hover:bg-red-500 text-red-500 hover:text-white px-3 py-1 rounded cursor-pointer"
                 onClick={() => deleteStudent(student.id)}
               >
                 Supprimer
