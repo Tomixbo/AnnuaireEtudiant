@@ -5,8 +5,6 @@ services:
     restart: always
     volumes:
       - sdm_db_data:/var/lib/mysql
-    env_file:
-      - .env
     environment:
       - MYSQL_DATABASE=${DB_NAME}
       - MYSQL_USER=${DB_USER}
@@ -18,8 +16,6 @@ services:
     restart: always
     ports:
       - 5000:5000
-    env_file:
-      - .env
     environment:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
@@ -34,8 +30,6 @@ services:
     restart: always
     ports:
       - 5173:5173
-    env_file:
-      - .env
     environment:
       - BACKEND_PORT=${BACKEND_PORT}
     depends_on:
